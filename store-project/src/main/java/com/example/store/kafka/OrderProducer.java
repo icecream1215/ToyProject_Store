@@ -1,34 +1,28 @@
 package com.example.store.kafka;
 
-import com.example.store.order.dto.OrderRequestDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.store.kafka.dto.OrderCancelKafkaMessage;
+import com.example.store.kafka.dto.OrderKafkaMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
 
 import static com.example.store.common.KafkaTopics.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderProducer {
-    private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendOrderCreate(OrderRequestDto orderRequestDto) {
-        try {
-            String jsonMessage = objectMapper.writeValueAsString(orderRequestDto);
-            kafkaTemplate.send(TOPIC_ORDER_CREATE, jsonMessage);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    public void sendOrderCreate(OrderKafkaMessage message) {
+        kafkaTemplate.send(TOPIC_ORDER_CREATE, message);
+        log.info("주문 생성 메시지 발행 완료");
     }
 
-    public void sendOrderCancel(Long orderId) {
-        try {
-            kafkaTemplate.send(TOPIC_ORDER_CANCEL, String.valueOf(orderId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void sendOrderCancel(OrderCancelKafkaMessage message) {
+        kafkaTemplate.send(TOPIC_ORDER_CANCEL, message);
+        log.info("주문 취소 메시지 발행 완료");
     }
 }

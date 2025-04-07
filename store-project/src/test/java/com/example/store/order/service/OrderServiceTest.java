@@ -38,7 +38,7 @@ class OrderServiceTest {
         requestDto.setItems(List.of(item1));
 
         // when
-        Long orderId = orderService.handleOrderCreate(requestDto);
+        Long orderId = orderService.createOrder(requestDto);
 
         // then
         Order savedOrder = orderRepository.findById(orderId).orElseThrow();
@@ -62,10 +62,10 @@ class OrderServiceTest {
         requestDto.setTotalAmount(5000);
         requestDto.setItems(List.of(item1));
 
-        Long orderId = orderService.handleOrderCreate(requestDto);
+        Long orderId = orderService.createOrder(requestDto);
 
         // when
-        orderService.handleOrderCancel(orderId);
+        orderService.cancelOrder(orderId);
 
         // then
         Order cancelledOrder = orderRepository.findById(orderId).orElseThrow();
