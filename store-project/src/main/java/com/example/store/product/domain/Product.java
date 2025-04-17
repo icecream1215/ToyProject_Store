@@ -35,4 +35,11 @@ public class Product {
     public void preUpdate() {
         this.updatedDt = LocalDateTime.now();
     }
+
+    public void decreaseStock(int quantity) {
+        if (stockQuantity < quantity) {
+            throw new IllegalStateException("재고가 부족합니다.");
+        }
+        this.stockQuantity -= quantity;
+    }
 }

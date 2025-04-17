@@ -1,5 +1,6 @@
 package com.example.store.order.domain;
 
+import com.example.store.order.dto.OrderRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,5 +44,14 @@ public class Order {
     @PreUpdate
     public void preUpdate() {
         this.updatedDt = LocalDateTime.now();
+    }
+
+    public static Order create(OrderRequestDto dto) {
+        Order order = new Order();
+        order.setUserId(dto.getUserId());
+        order.setTotalAmount(dto.getTotalAmount());
+        order.setStatus(OrderStatus.SE);
+
+        return order;
     }
 }
