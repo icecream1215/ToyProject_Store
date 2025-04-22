@@ -7,6 +7,7 @@ import com.example.store.order.domain.OrderItem;
 import com.example.store.order.domain.OrderStatus;
 import com.example.store.order.dto.OrderItemDto;
 import com.example.store.order.dto.OrderRequestDto;
+import com.example.store.order.dto.OrderResponseDto;
 import com.example.store.order.repository.OrderRepository;
 import com.example.store.product.domain.Product;
 import com.example.store.product.repository.ProductRepository;
@@ -119,5 +120,15 @@ public class OrderService {
     @Transactional
     public void handleOrderCancel(Long orderId) {
         cancelOrder(orderId);
+    }
+
+    public List<OrderResponseDto> getUserOrders(String userId) {
+        //User user = userRepository.findByUsername(username)
+        //       .orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream()
+                .map(OrderResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
