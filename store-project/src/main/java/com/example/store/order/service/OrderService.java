@@ -1,7 +1,9 @@
 package com.example.store.order.service;
 
+import com.example.store.kafka.PaymentProducer;
 import com.example.store.kafka.dto.OrderItemKafkaMessage;
 import com.example.store.kafka.dto.OrderKafkaMessage;
+import com.example.store.kafka.dto.PaymentRequestEvent;
 import com.example.store.order.domain.Order;
 import com.example.store.order.domain.OrderItem;
 import com.example.store.order.domain.OrderStatus;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final PaymentProducer paymentProducer;
 
     @Transactional
     public Long createOrder(OrderRequestDto requestDto) {
@@ -66,6 +69,14 @@ public class OrderService {
         }
 
         Order savedOrder = orderRepository.save(order);
+
+        PaymentRequestEvent event = new PaymentRequestEvent();
+        event.setOrderId(savedOrder.getId());
+        event.setUserId(savedOrder.getUserId());
+        event.setAmount(savedOrder.getTotalAmount());
+
+        paymentProducer.sendPaymentRequest(event);
+
         return savedOrder.getId(); // 주문번호
     }
 
@@ -106,6 +117,13 @@ public class OrderService {
         }
         productRepository.saveAll(products);
         Order savedOrder = orderRepository.save(order);
+
+        PaymentRequestEvent event = new PaymentRequestEvent();
+        event.setOrderId(savedOrder.getId());
+        event.setUserId(savedOrder.getUserId());
+        event.setAmount(savedOrder.getTotalAmount());
+
+        paymentProducer.sendPaymentRequest(event);
 
         return savedOrder.getId(); // 주문번호
     }

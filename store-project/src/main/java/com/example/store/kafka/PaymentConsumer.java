@@ -25,9 +25,13 @@ public class PaymentConsumer {
 
         PaymentResultEvent result = new PaymentResultEvent();
         result.setOrderId(event.getOrderId());
+        result.setUserId(event.getUserId());
+        result.setAmount(event.getAmount());
         result.setSuccess(isSuccess);
 
         kafkaTemplate.send(TOPIC_PAYMENT_RESULT, result);
-        log.info(" 결제 결과 발행: " + result);
+
+        log.info("결제 결과 발행: orderId={}, userId={}, amount={}, success={}",
+                result.getOrderId(), result.getUserId(), result.getAmount(), result.isSuccess());
     }
 }

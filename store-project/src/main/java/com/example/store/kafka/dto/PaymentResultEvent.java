@@ -7,5 +7,7 @@ import lombok.Setter;
 @Setter
 public class PaymentResultEvent {
     private Long orderId;
+    private String userId;
+    private Integer amount;
     private boolean success;
 }
